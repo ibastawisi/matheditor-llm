@@ -5,10 +5,6 @@ import {
 	formatStreamPart,
 } from 'ai';
 
-export interface Env {
-	AI: any;
-}
-
 function parseCloudflareStream(): AIStreamParser {
 	return data => {
 		const json = JSON.parse(data) as {
@@ -34,10 +30,11 @@ export default {
 			});
 		}
 
-		const { messages } = await request.json<{ messages: { role: string; content: string }[] }>();
+		const { messages } = await request.json() as { messages: { role: string; content: string }[] };
 
-		const cfStream = await env.AI.run("@hf/google/gemma-7b-it", {
+		const cfStream = await env.AI.run("@cf/meta/llama-3-8b-instruct", {
 			messages,
+			max_tokens: 2048,
 			stream: true,
 		});
 
